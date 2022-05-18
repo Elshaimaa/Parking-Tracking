@@ -94,25 +94,24 @@ def get_Contour(img_part):
     # use dilate, erode, and blur to smooth out the mask
     mask = cv2.dilate(mask, None, iterations=dilate_iter)
     mask = cv2.erode(mask, None, iterations=erode_iter)
-    # mask = cv2.GaussianBlur(mask, (blur, blur), 0)
-    # cv2.imshow("Foreground", mask)
-
-    # mask_stack = np.dstack([mask] * 3)
-    # # Ensures data types match up
-    # mask_stack = mask_stack.astype('float32') / 255.0
-    # frame = img_part.astype('float32') / 255.0
-
-    # Blend the image and the mask
-    # masked = (mask_stack * frame) + ((1 - mask_stack) * mask_color)
-    # masked = (masked * 255).astype('uint8')
-    # cv2.imshow("Foreground", masked)
-
     mask = np.where((mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
 
     contour, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # print(contour)
-    return contour
+    maxArea = 0
+    contourBox = []
+    for cnt in contour:
+        rect = cv2.minAreaRect(contour[0])
+        box = cv2.boxPoints(rect)
+        box = np.int0(box)
+        deltaX = np.abs(box[0][0] - box[2][0])
+        deltaY = np.abs(box[0][1] - box[2][1])
+        area = deltaX * deltaY
+        if maxArea < area:
+            maxArea = area
+            contourBox = [box]
+    # cv2.drawContours(img_part_org, contourBox, 0, (0, 0, 255), 2)
+    return contourBox
 
 def get_spot_info(bboxes,intersectionThreshold, img):
     parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
@@ -133,9 +132,9 @@ def get_spot_info(bboxes,intersectionThreshold, img):
         poly = Polygon([(bboxes[0], bboxes[1]), (bboxes[0], bboxes[3]), (bboxes[2], bboxes[3]),(bboxes[2], bboxes[1])])
         if len(contour) != 0:
             # cv2.drawContours(img_part_org, contour, -1, (0, 255, 0))hjj
-            poly_draw = np.array([[contour[0][j][0][0] + startX, contour[0][j][0][1] + startY] for j in range(len(contour[0]))])
+            poly_draw = np.array([[contour[0][j][0] + startX, contour[0][j][1] + startY] for j in range(len(contour[0]))])
             img = cv2.polylines(img=img, pts=np.int32([list(poly_draw)]), isClosed=True, color=(255,127,80), thickness=1)
-            poly = Polygon([(contour[0][j][0][0] + startX, contour[0][j][0][1] + startY) for j in range(len(contour[0]))])
+            poly = Polygon([(contour[0][j][0] + startX, contour[0][j][1] + startY) for j in range(len(contour[0]))])
 
         p2 = parking_spots[spot_index][0]
         p3 = poly.intersection(p2)
