@@ -116,8 +116,8 @@ import yolov7
 def getSpotsInfo(image):
     pred = yolov7.getDetectionResult(image)
     return pred
-def get_spot_info(bboxes,intersectionThreshold, img):
-    points = getSpotsInfo(img)
+def get_spot_info(bboxes, intersectionThreshold, datasetItem):
+    points = getSpotsInfo(datasetItem)
     LOGGER.warning(f'pointssssss: {points}')
     raise Exception(points)
     parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
@@ -356,7 +356,7 @@ def detect(opt):
                 txt_file_name = p.name
                 save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
             else:
-                p, im0, _ = path, im0s.copy(), getattr(dataset, 'frame', 0)
+                p, im0, fn = path, im0s.copy(), getattr(dataset, 'frame', 0)
                 p = Path(p)  # to Path
                 # video file
                 if source.endswith(VID_FORMATS):
@@ -410,7 +410,7 @@ def detect(opt):
                             with open(txt_path + '.txt', 'a') as f:
                                 f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
-                        spot_name, percentage = get_spot_info(bboxes, intersectionThreshold, im0)
+                        spot_name, percentage = get_spot_info(bboxes, intersectionThreshold,(path, im0, im0s, vid_cap, fn))
                         if spot_name != "":
                             update_records(id, spot_name, percentage)
                         if save_vid or save_crop or show_vid:  # Add bbox to image

@@ -150,7 +150,7 @@ def detect(save_img=False):
 
     print(f'Done. ({time.time() - t0:.3f}s)')
 
-def getDetectionResult(source, save_img=False):
+def getDetectionResult(datasetItem, save_img=False):
     #weights hard coded
     view_img = True
     save_txt = True
@@ -162,7 +162,7 @@ def getDetectionResult(source, save_img=False):
 
     # Initialize
     set_logging()
-    device = select_device(opt.device)
+    device = select_device('')
     half = device.type != 'cpu'  # half precision only supported on CUDA
 
     # Load model
@@ -181,8 +181,8 @@ def getDetectionResult(source, save_img=False):
 
     # Set Dataloader
     vid_path, vid_writer = None, None
-    dataset = LoadImages(source, img_size=imgsz, stride=stride)
-
+    # dataset = LoadImages(source, img_size=imgsz, stride=stride)
+    dataset = [datasetItem]
     # Get names and colors
     names = model.module.names if hasattr(model, 'module') else model.names
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in names]
@@ -192,7 +192,7 @@ def getDetectionResult(source, save_img=False):
         model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once
     t0 = time.time()
     returnedPredicition = ''
-    for path, img, im0s, vid_cap in dataset:
+    for path, img, im0s, vid_cap, fn in dataset:
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
@@ -216,11 +216,13 @@ def getDetectionResult(source, save_img=False):
             # if webcam:  # batch_size >= 1
             #     p, s, im0, frame = path[i], '%g: ' % i, im0s[i].copy(), dataset.count
             # else:
-            p, s, im0, frame = path, '', im0s, getattr(dataset, 'frame', 0)
-
+            # p, s, im0, frame = path, '', im0s, getattr(dataset, 'frame', 0)
+            s=''
+            p, im0, frame = path, im0s, fn
             p = Path(p)  # to Path
             save_path = str(save_dir / p.name)  # img.jpg
-            txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
+            # txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
+            txt_path = str(save_dir / 'labels' / p.stem) + f'_{frame}'  # img.txt
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             if len(det):
@@ -254,23 +256,23 @@ def getDetectionResult(source, save_img=False):
 
             # Save results (image with detections)
             if save_img:
-                if dataset.mode == 'image':
-                    cv2.imwrite(save_path, im0)
-                    print(f" The image with the result is saved in: {save_path}")
-                else:  # 'video' or 'stream'
-                    if vid_path != save_path:  # new video
-                        vid_path = save_path
-                        if isinstance(vid_writer, cv2.VideoWriter):
-                            vid_writer.release()  # release previous video writer
-                        if vid_cap:  # video
-                            fps = vid_cap.get(cv2.CAP_PROP_FPS)
-                            w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                            h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                        else:  # stream
-                            fps, w, h = 30, im0.shape[1], im0.shape[0]
-                            save_path += '.mp4'
-                        vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
-                    vid_writer.write(im0)
+                # if dataset.mode == 'image':
+                cv2.imwrite(save_path, im0)
+                print(f" The image with the result is saved in: {save_path}")
+                # else:  # 'video' or 'stream'
+                #     if vid_path != save_path:  # new video
+                #         vid_path = save_path
+                #         if isinstance(vid_writer, cv2.VideoWriter):
+                #             vid_writer.release()  # release previous video writer
+                #         if vid_cap:  # video
+                #             fps = vid_cap.get(cv2.CAP_PROP_FPS)
+                #             w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                #             h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                #         else:  # stream
+                #             fps, w, h = 30, im0.shape[1], im0.shape[0]
+                #             save_path += '.mp4'
+                #         vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+                #     vid_writer.write(im0)
         returnedPredicition = pred
     if save_txt or save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
