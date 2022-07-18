@@ -112,9 +112,9 @@ def get_Contour(img_part):
             contourBox = [box]
     # cv2.drawContours(img_part_org, contourBox, 0, (0, 0, 255), 2)
     return contourBox
-import yolov7
+from yolov7 import detect
 def getSpotsInfo(image):
-    pred = yolov7.getDetectionResult(image)
+    pred = detect.getDetectionResult(image)
     return pred
 def get_spot_info(bboxes, intersectionThreshold, datasetItem):
     points = getSpotsInfo(datasetItem)
