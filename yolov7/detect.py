@@ -7,12 +7,12 @@ import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
 
-from models.experimental import attempt_load
-from utils.datasets import LoadStreams, LoadImages
-from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
+from yolov7.models.experimental import attempt_load
+from yolov7.utils.datasets import LoadStreams, LoadImages
+from yolov7.utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
     scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path
-from utils.plots import plot_one_box
-from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
+from yolov7.utils.plots import plot_one_box
+from yolov7.utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 
 def detect(save_img=False):
@@ -155,10 +155,10 @@ def getDetectionResult(datasetItem, save_img=False):
     view_img = True
     save_txt = True
     imgsz = 640
-    weights = 'yolov7W.pt'
+    weights = 'yolov7/yolov7W.pt'
     # Directories
-    save_dir = Path(increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok))  # increment run
-    (save_dir / 'labels' if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
+    # save_dir ='runs/'  # increment run
+    # (save_dir / 'labels' if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
 
     # Initialize
     set_logging()
@@ -220,9 +220,9 @@ def getDetectionResult(datasetItem, save_img=False):
             s=''
             p, im0, frame = path, im0s, fn
             p = Path(p)  # to Path
-            save_path = str(save_dir / p.name)  # img.jpg
-            # txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
-            txt_path = str(save_dir / 'labels' / p.stem) + f'_{frame}'  # img.txt
+            # save_path = str(save_dir / p.name)  # img.jpg
+            # # txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
+            # txt_path = str(save_dir / 'labels' / p.stem) + f'_{frame}'  # img.txt
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             if len(det):
@@ -235,30 +235,30 @@ def getDetectionResult(datasetItem, save_img=False):
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
-                for *xyxy, conf, cls in reversed(det):
-                    if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        line = (cls, *xywh, conf) if opt.save_conf else (cls, *xywh)  # label format
-                        with open(txt_path + '.txt', 'a') as f:
-                            f.write(('%g ' * len(line)).rstrip() % line + '\n')
-
-                    if save_img or view_img:  # Add bbox to image
-                        label = f'{names[int(cls)]} {conf:.2f}'
-                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
+                # for *xyxy, conf, cls in reversed(det):
+                #     if save_txt:  # Write to file
+                #         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                #         line = (cls, *xywh, conf) if opt.save_conf else (cls, *xywh)  # label format
+                #         with open(txt_path + '.txt', 'a') as f:
+                #             f.write(('%g ' * len(line)).rstrip() % line + '\n')
+                #
+                #     if save_img or view_img:  # Add bbox to image
+                #         label = f'{names[int(cls)]} {conf:.2f}'
+                #         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
 
             # Print time (inference + NMS)
             #print(f'{s}Done. ({t2 - t1:.3f}s)')
 
             # Stream results
-            if view_img:
-                cv2.imshow(str(p), im0)
-                cv2.waitKey(1)  # 1 millisecond
+            # if view_img:
+            #     cv2.imshow(str(p), im0)
+            #     cv2.waitKey(1)  # 1 millisecond
 
             # Save results (image with detections)
-            if save_img:
-                # if dataset.mode == 'image':
-                cv2.imwrite(save_path, im0)
-                print(f" The image with the result is saved in: {save_path}")
+            # if save_img:
+            #     # if dataset.mode == 'image':
+            #     cv2.imwrite(save_path, im0)
+            #     print(f" The image with the result is saved in: {save_path}")
                 # else:  # 'video' or 'stream'
                 #     if vid_path != save_path:  # new video
                 #         vid_path = save_path
@@ -274,9 +274,9 @@ def getDetectionResult(datasetItem, save_img=False):
                 #         vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
                 #     vid_writer.write(im0)
         returnedPredicition = pred
-    if save_txt or save_img:
-        s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
-        #print(f"Results saved to {save_dir}{s}")
+    # if save_txt or save_img:
+    #     s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
+    #     #print(f"Results saved to {save_dir}{s}")
 
     print(f'Done. ({time.time() - t0:.3f}s)')
     return returnedPredicition
