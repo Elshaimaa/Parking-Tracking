@@ -14,7 +14,7 @@ from copy import copy, deepcopy
 def preprocess(intersectionThreshold, initTime):
     #download videos from the drive
     os.system("pip install -qr requirements.txt")
-    os.system("pip install -qr yolov7/requirements.txt")
+    os.system("pip install -qr 'yolov7/requirements.txt'")
     os.system("gdown --id 11JywddUoylzK6Km1IUeMdJi1jCP7VrDE")
     os.system("unrar x \"1st location-7th st-P bandar.rar\"")
 
