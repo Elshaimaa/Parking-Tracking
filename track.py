@@ -112,8 +112,14 @@ def get_Contour(img_part):
             contourBox = [box]
     # cv2.drawContours(img_part_org, contourBox, 0, (0, 0, 255), 2)
     return contourBox
-
+import yolov7
+def getSpotsInfo(image):
+    pred = yolov7.getDetectionResult(image)
+    return pred
 def get_spot_info(bboxes,intersectionThreshold, img):
+    points = getSpotsInfo(img)
+    LOGGER.warning(f'pointssssss: {points}')
+    raise Exception(points)
     parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
                      (Polygon([(140, 130), (210, 125), (240, 200), (140, 210)]), "A2"),
                      (Polygon([(240, 200), (140, 210), (160, 400), (300, 400)]), "A3"),
