@@ -2,7 +2,8 @@
 """
 Logging utils
 """
-
+import pkgutil
+__path__ = pkgutil.extend_path(__path__, __name__)
 import os
 import warnings
 from threading import Thread
