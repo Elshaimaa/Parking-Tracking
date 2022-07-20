@@ -414,7 +414,7 @@ def detect(opt):
                             with open(txt_path + '.txt', 'a') as f:
                                 f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
-                        spot_name, percentage = get_spot_info(bboxes, intersectionThreshold, im0)
+                        spot_name, percentage = get_spot_info(bboxes, intersectionThreshold, im)
                         if spot_name != "":
                             update_records(id, spot_name, percentage)
                         if save_vid or save_crop or show_vid:  # Add bbox to image
