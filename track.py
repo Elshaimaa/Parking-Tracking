@@ -112,14 +112,14 @@ def get_Contour(img_part):
             contourBox = [box]
     # cv2.drawContours(img_part_org, contourBox, 0, (0, 0, 255), 2)
     return contourBox
-
 def get_spot_info(bboxes,intersectionThreshold, img):
-    parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
-                     (Polygon([(140, 130), (210, 125), (240, 200), (140, 210)]), "A2"),
-                     (Polygon([(240, 200), (140, 210), (160, 400), (300, 400)]), "A3"),
-                     (Polygon([(289, 70), (335, 54), (388, 91), (326, 111)]), "B1"),
-                     (Polygon([(388, 91), (326, 111), (388, 177), (458, 147)]), "B2"),
-                     (Polygon([(553, 337), (613, 269), (458, 147), (388, 177)]), "B3")]
+    parking_spots = getSpotsInfo(img)
+    # parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
+    #                  (Polygon([(140, 130), (210, 125), (240, 200), (140, 210)]), "A2"),
+    #                  (Polygon([(240, 200), (140, 210), (160, 400), (300, 400)]), "A3"),
+    #                  (Polygon([(289, 70), (335, 54), (388, 91), (326, 111)]), "B1"),
+    #                  (Polygon([(388, 91), (326, 111), (388, 177), (458, 147)]), "B2"),
+    #                  (Polygon([(553, 337), (613, 269), (458, 147), (388, 177)]), "B3")]
     parkingSpotIndex = -1
     max_percentage = 0
     for spot_index in range(len(parking_spots)):
@@ -233,6 +233,15 @@ def update_records(id, spot_name, percent):
     else:
         records[id] = {spot_name: ([curr_time, curr_time], [percent, percent])}
 
+def detectOccupancy(im):
+    modelPath = "yolov5/weights/yoloOccupancy.pt"
+    model = DetectMultiBackend(yolo_model, device=device, dnn=opt.dnn)
+    pred = model(im, augment=opt.augment, visualize=visualize)
+    raise Exception(pred)
+    return pred
+def getSpotsInfo(image):
+    pred = getDetectionResult(image)
+    return pred
 
 def detect(opt):
     out, source, yolo_model, deep_sort_model, show_vid, save_vid, save_txt, imgsz, evaluate, half, \
