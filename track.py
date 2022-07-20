@@ -112,8 +112,8 @@ def get_Contour(img_part):
             contourBox = [box]
     # cv2.drawContours(img_part_org, contourBox, 0, (0, 0, 255), 2)
     return contourBox
-def get_spot_info(bboxes,intersectionThreshold, img):
-    parking_spots = getSpotsInfo(img)
+def get_spot_info(bboxes,intersectionThreshold, img, im0):
+    parking_spots = getSpotsInfo(img, im0)
     # parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
     #                  (Polygon([(140, 130), (210, 125), (240, 200), (140, 210)]), "A2"),
     #                  (Polygon([(240, 200), (140, 210), (160, 400), (300, 400)]), "A3"),
@@ -233,7 +233,7 @@ def update_records(id, spot_name, percent):
     else:
         records[id] = {spot_name: ([curr_time, curr_time], [percent, percent])}
 
-def detectOccupancy(im):
+def detectOccupancy(im, im0):
     modelPath = "yolov5/weights/yoloOccupancy.pt"
     device = select_device(opt.device)
     model = DetectMultiBackend(modelPath, device=device, dnn=True)
@@ -249,8 +249,8 @@ def detectOccupancy(im):
             LOGGER.info(f'class : {clss}, points : {xywhs}')
     # raise Exception(pred)
     return pred
-def getSpotsInfo(image):
-    pred = detectOccupancy(image)
+def getSpotsInfo(image, im0):
+    pred = detectOccupancy(image, im0)
     return pred
 
 def detect(opt):
@@ -423,7 +423,7 @@ def detect(opt):
                             with open(txt_path + '.txt', 'a') as f:
                                 f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
-                        spot_name, percentage = get_spot_info(bboxes, intersectionThreshold, im)
+                        spot_name, percentage = get_spot_info(bboxes, intersectionThreshold, im, im0)
                         if spot_name != "":
                             update_records(id, spot_name, percentage)
                         if save_vid or save_crop or show_vid:  # Add bbox to image
