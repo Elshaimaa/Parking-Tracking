@@ -238,7 +238,16 @@ def detectOccupancy(im):
     device = select_device(opt.device)
     model = DetectMultiBackend(modelPath, device=device, dnn=True)
     pred = model(im, augment=opt.augment, visualize=False)
-    raise Exception(pred)
+    pred = non_max_suppression(pred)
+    for i, det in enumerate(pred):
+        if det is not None and len(det):
+            # Rescale boxes from img_size to im0 size
+            det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
+            xywhs = xyxy2xywh(det[:, 0:4])
+            confs = det[:, 4]
+            clss = det[:, 5]
+            LOGGER.info(f'class : {clss}, points : {xywhs}')
+    # raise Exception(pred)
     return pred
 def getSpotsInfo(image):
     pred = detectOccupancy(image)
