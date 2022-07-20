@@ -237,7 +237,7 @@ def detectOccupancy(im):
     modelPath = "yolov5/weights/yoloOccupancy.pt"
     device = select_device(opt.device)
     model = DetectMultiBackend(modelPath, device=device, dnn=True)
-    pred = model(im, augment=opt.augment, visualize=visualize)
+    pred = model(im, augment=opt.augment, visualize=False)
     raise Exception(pred)
     return pred
 def getSpotsInfo(image):
