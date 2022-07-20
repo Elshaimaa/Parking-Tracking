@@ -235,7 +235,8 @@ def update_records(id, spot_name, percent):
 
 def detectOccupancy(im):
     modelPath = "yolov5/weights/yoloOccupancy.pt"
-    model = DetectMultiBackend(modelPath, device=device, dnn=opt.dnn)
+    device = select_device(opt.device)
+    model = DetectMultiBackend(modelPath, device=device, dnn=True)
     pred = model(im, augment=opt.augment, visualize=visualize)
     raise Exception(pred)
     return pred
