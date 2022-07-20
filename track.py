@@ -240,7 +240,7 @@ def detectOccupancy(im):
     raise Exception(pred)
     return pred
 def getSpotsInfo(image):
-    pred = getDetectionResult(image)
+    pred = detectOccupancy(image)
     return pred
 
 def detect(opt):
