@@ -21,7 +21,7 @@ import numpy as np
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, box
 
 from yolov5.models.experimental import attempt_load
 from yolov5.utils.downloads import attempt_download
@@ -259,7 +259,12 @@ def detectOccupancy(im, im0):
                 annotator = Annotator(im0, line_width=2, example=str(names))
                 annotator.box_label(xyxy, label, color=colors(c, True))
                 LOGGER.info(f'points : {xyxy[0].item()}')
-                boxes.append((Polygon(xyxy)))
+                p1x = xyxy[0].item()
+                p1y = xyxy[1].item()
+                p2x = xyxy[2].item()
+                p2y = xyxy[3].item()
+                boxes.append(box(p1x, p1y, p2x, p2y))
+                LOGGER.info(type(boxes))
         # im0 = annotator.result()
         # cv2.imwrite(str(count)+".jpg", im0)
     raise Exception(boxes)
