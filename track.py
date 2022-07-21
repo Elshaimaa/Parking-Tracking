@@ -451,7 +451,7 @@ def detect(opt):
                             label = f'{id} {names[c]} No Spot'
                             if percentage != 0:
                                 label = f'{id} {names[c]} Spot {spot_name} {percentage}%'
-                            #annotator.box_label(bboxes, label, color=colors(c, True))
+                            annotator.box_label(bboxes, label, color=colors(c, True))
                             if save_crop:
                                 txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
                                 save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[
