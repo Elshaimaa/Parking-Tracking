@@ -128,13 +128,13 @@ def get_spot_info(bboxes,intersectionThreshold, img, im0):
         startY = int(min([bboxes[1],bboxes[3]]))
         endY = int(max([bboxes[1],bboxes[3]]))
         bb = img[startY:endY, startX:endX]
-        contour = get_Contour(bb)
+        # contour = get_Contour(bb)
         poly = Polygon([(bboxes[0], bboxes[1]), (bboxes[0], bboxes[3]), (bboxes[2], bboxes[3]),(bboxes[2], bboxes[1])])
-        if len(contour) != 0:
-            # cv2.drawContours(img_part_org, contour, -1, (0, 255, 0))hjj
-            poly_draw = np.array([[contour[0][j][0] + startX, contour[0][j][1] + startY] for j in range(len(contour[0]))])
-            img = cv2.polylines(img=img, pts=np.int32([list(poly_draw)]), isClosed=True, color=(255,127,80), thickness=1)
-            poly = Polygon([(contour[0][j][0] + startX, contour[0][j][1] + startY) for j in range(len(contour[0]))])
+        # if len(contour) != 0:
+        #     # cv2.drawContours(img_part_org, contour, -1, (0, 255, 0))hjj
+        #     poly_draw = np.array([[contour[0][j][0] + startX, contour[0][j][1] + startY] for j in range(len(contour[0]))])
+        #     img = cv2.polylines(img=img, pts=np.int32([list(poly_draw)]), isClosed=True, color=(255,127,80), thickness=1)
+        #     poly = Polygon([(contour[0][j][0] + startX, contour[0][j][1] + startY) for j in range(len(contour[0]))])
 
         p2 = parking_spots[spot_index][0]
         p3 = poly.intersection(p2)
@@ -264,10 +264,10 @@ def detectOccupancy(im, im0):
                 p2x = xyxy[2].item()
                 p2y = xyxy[3].item()
                 boxes.append((box(p1x, p1y, p2x, p2y),"x"))
-                # LOGGER.info(type(boxes[0]))
         # im0 = annotator.result()
         # cv2.imwrite(str(count)+".jpg", im0)
     # raise Exception(boxes)
+    LOGGER.info(boxes)
     return boxes
 def getSpotsInfo(image, im0):
     pred = detectOccupancy(image, im0)
