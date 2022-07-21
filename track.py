@@ -260,7 +260,7 @@ def detectOccupancy(im, im0):
                 annotator.box_label(xyxy, label, color=colors(c, True))
 
         im0 = annotator.result()
-        cv2.imwrite(str(count), im0)
+        cv2.imwrite(str(count)+".jpg", im0)
     raise Exception(pred)
     return pred
 def getSpotsInfo(image, im0):
