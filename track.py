@@ -237,8 +237,13 @@ def detectOccupancy(im, im0):
     modelPath = "yolov5/weights/yoloOccupancy.pt"
     device = select_device(opt.device)
     model = DetectMultiBackend(modelPath, device=device, dnn=True)
+    stride, names, pt = model.stride, model.names, model.pt
+    imgsz = (640, 640)
+    imgsz = check_img_size(imgsz, s=stride)  # check image size
+    model.warmup(imgsz=(1, 3, *imgsz))  # warmup
     pred = model(im, augment=opt.augment, visualize=False)
     pred = non_max_suppression(pred)
+    count = 0
     for i, det in enumerate(pred):
         if det is not None and len(det):
             # Rescale boxes from img_size to im0 size
@@ -246,8 +251,17 @@ def detectOccupancy(im, im0):
             xywhs = xyxy2xywh(det[:, 0:4])
             confs = det[:, 4]
             clss = det[:, 5]
-            LOGGER.info(f'class : {clss}, points : {xywhs}')
-    # raise Exception(pred)
+            LOGGER.info(f'class : {det[:, -1].unique()}, points : {xywhs}')
+
+            for *xyxy, conf, cls in reversed(det):
+                c = int(cls)  # integer class
+                label = (f'{names[c]} {conf:.2f}')
+                annotator = Annotator(im0, line_width=4, example=str(names))
+                annotator.box_label(xyxy, label, color=colors(c, True))
+
+        im0 = annotator.result()
+        cv2.imwrite(str(count), im0)
+    raise Exception(pred)
     return pred
 def getSpotsInfo(image, im0):
     pred = detectOccupancy(image, im0)
