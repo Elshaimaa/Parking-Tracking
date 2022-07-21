@@ -258,7 +258,7 @@ def detectOccupancy(im, im0):
                 label = (f'{names[c]} {conf:.2f}')
                 annotator = Annotator(im0, line_width=2, example=str(names))
                 annotator.box_label(xyxy, label, color=colors(c, True))
-                LOGGER.info(f'points : {xyxy[0][0]}')
+                LOGGER.info(f'points : {xyxy[0].item()}')
                 boxes.append((Polygon(xyxy)))
         # im0 = annotator.result()
         # cv2.imwrite(str(count)+".jpg", im0)
