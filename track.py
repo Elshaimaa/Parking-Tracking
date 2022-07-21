@@ -243,25 +243,26 @@ def detectOccupancy(im, im0):
     model.warmup(imgsz=(1, 3, *imgsz))  # warmup
     pred = model(im, augment=opt.augment, visualize=False)
     pred = non_max_suppression(pred)
+    boxes = []
     count = 0
     for i, det in enumerate(pred):
+        count += 1
         if det is not None and len(det):
             # Rescale boxes from img_size to im0 size
             det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
             xywhs = xyxy2xywh(det[:, 0:4])
-            confs = det[:, 4]
-            clss = det[:, 5]
             LOGGER.info(f'class : {det[:, -1].unique()}, points : {xywhs}')
 
             for *xyxy, conf, cls in reversed(det):
                 c = int(cls)  # integer class
                 label = (f'{names[c]} {conf:.2f}')
-                annotator = Annotator(im0, line_width=4, example=str(names))
+                annotator = Annotator(im0, line_width=2, example=str(names))
                 annotator.box_label(xyxy, label, color=colors(c, True))
-
-        im0 = annotator.result()
-        cv2.imwrite(str(count)+".jpg", im0)
-    raise Exception(pred)
+                LOGGER.info(f'points : {xywhs}')
+                boxes.append((Polygon(xyxy)))
+        # im0 = annotator.result()
+        # cv2.imwrite(str(count)+".jpg", im0)
+    raise Exception(boxes)
     return pred
 def getSpotsInfo(image, im0):
     pred = detectOccupancy(image, im0)
