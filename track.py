@@ -263,12 +263,12 @@ def detectOccupancy(im, im0):
                 p1y = xyxy[1].item()
                 p2x = xyxy[2].item()
                 p2y = xyxy[3].item()
-                boxes.append(box(p1x, p1y, p2x, p2y))
-                LOGGER.info(type(boxes))
+                boxes.append((box(p1x, p1y, p2x, p2y),"x"))
+                # LOGGER.info(type(boxes[0]))
         # im0 = annotator.result()
         # cv2.imwrite(str(count)+".jpg", im0)
-    raise Exception(boxes)
-    return pred
+    # raise Exception(boxes)
+    return boxes
 def getSpotsInfo(image, im0):
     pred = detectOccupancy(image, im0)
     return pred
