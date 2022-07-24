@@ -465,7 +465,7 @@ def detect(opt):
 
             # Stream results
             im0 = annotator.result()
-            im0 = drawBoundaries(im0)
+            #im0 = drawBoundaries(im0)
             if show_vid:
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
