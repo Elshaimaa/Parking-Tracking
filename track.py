@@ -113,13 +113,13 @@ def get_Contour(img_part):
     # cv2.drawContours(img_part_org, contourBox, 0, (0, 0, 255), 2)
     return contourBox
 def get_spot_info(bboxes,intersectionThreshold, img, im0):
-    parking_spots = getSpotsInfo(img, im0)
-    # parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
-    #                  (Polygon([(140, 130), (210, 125), (240, 200), (140, 210)]), "A2"),
-    #                  (Polygon([(240, 200), (140, 210), (160, 400), (300, 400)]), "A3"),
-    #                  (Polygon([(289, 70), (335, 54), (388, 91), (326, 111)]), "B1"),
-    #                  (Polygon([(388, 91), (326, 111), (388, 177), (458, 147)]), "B2"),
-    #                  (Polygon([(553, 337), (613, 269), (458, 147), (388, 177)]), "B3")]
+    # parking_spots = getSpotsInfo(img, im0)
+    parking_spots = [(Polygon([(180, 70), (140, 70), (140, 130), (210, 125)]), "A1"),
+                     (Polygon([(140, 130), (210, 125), (240, 200), (140, 210)]), "A2"),
+                     (Polygon([(240, 200), (140, 210), (160, 400), (300, 400)]), "A3"),
+                     (Polygon([(289, 70), (335, 54), (388, 91), (326, 111)]), "B1"),
+                     (Polygon([(388, 91), (326, 111), (388, 177), (458, 147)]), "B2"),
+                     (Polygon([(553, 337), (613, 269), (458, 147), (388, 177)]), "B3")]
     parkingSpotIndex = -1
     max_percentage = 0
     for spot_index in range(len(parking_spots)):
@@ -465,7 +465,7 @@ def detect(opt):
 
             # Stream results
             im0 = annotator.result()
-            #im0 = drawBoundaries(im0)
+            im0 = drawBoundaries(im0)
             if show_vid:
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
