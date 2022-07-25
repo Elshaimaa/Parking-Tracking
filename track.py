@@ -448,14 +448,15 @@ def detect(opt):
                             update_records(id, spot_name, percentage)
                         if save_vid or save_crop or show_vid:  # Add bbox to image
                             c = int(cls)  # integer class
-                            label = f'{id} {names[c]} No Spot'
+                            label = ''
                             if percentage != 0:
-                                label = f'{id} {names[c]} Spot {spot_name} {percentage}%'
-                            annotator.box_label(bboxes, label, color=colors(c, True))
-                            if save_crop:
-                                txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
-                                save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[
-                                    c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
+                                label = f'{id} {names[c]}'#Spot {spot_name} {percentage}%'
+                            if len(label) != 0:
+                                annotator.box_label(bboxes, label, color=colors(c, True))
+                                if save_crop:
+                                    txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
+                                    save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[
+                                        c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
 
                 LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
 
@@ -465,7 +466,7 @@ def detect(opt):
 
             # Stream results
             im0 = annotator.result()
-            im0 = drawBoundaries(im0)
+            # im0 = drawBoundaries(im0)
             if show_vid:
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
