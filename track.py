@@ -181,11 +181,11 @@ def write_to_excel(records, sourceFile):
     sheet1 = wb.add_sheet(sourceFile)
 
     sheet1.write(0, 1, 'car ID')
-    sheet1.write(0, 2, 'Slot ID')
-    sheet1.write(0, 3, 'Arrival time')
-    sheet1.write(0, 4, 'Departure time')
-    sheet1.write(0, 5, 'Duration')
-    sheet1.write(0, 6, 'Intersection')
+    sheet1.write(0, 2, 'Arrival time')
+    sheet1.write(0, 3, 'Departure time')
+    sheet1.write(0, 4, 'Duration')
+    # sheet1.write(0, 5, 'Slot ID')
+    # sheet1.write(0, 6, 'Intersection')
     # records = {3.0: {'A2': ([datetime.datetime(2021, 7, 31, 17, 52, 37), datetime.datetime(2021, 7, 31, 18, 2, 15)], [92, 97])},
     #            8.0: {'A1': ([datetime.datetime(2021, 7, 31, 17, 52, 37), datetime.datetime(2021, 7, 31, 18, 2, 15)], [94, 98])},
     #            19.0: {'B2': ([datetime.datetime(2021, 7, 31, 17, 52, 43), datetime.datetime(2021, 7, 31, 18, 2, 15)], [51, 87])},
@@ -200,11 +200,11 @@ def write_to_excel(records, sourceFile):
         for spot_ID in records[car_ID]:
             spot_data = records[car_ID][spot_ID]
             duration = (spot_data[0][1] - spot_data[0][0])
-            sheet1.write(record_idx + spot_idx, 2, spot_ID)
-            sheet1.write(record_idx + spot_idx, 3, spot_data[0][0].strftime('%d/%m/%Y %H:%M:%S'))
-            sheet1.write(record_idx + spot_idx, 4, spot_data[0][1].strftime('%d/%m/%Y %H:%M:%S'))
-            sheet1.write(record_idx + spot_idx, 5, str(duration))
-            sheet1.write(record_idx + spot_idx, 6, int((spot_data[1][0] + spot_data[1][1]) / 2))
+            sheet1.write(record_idx + spot_idx, 2, spot_data[0][0].strftime('%d/%m/%Y %H:%M:%S'))
+            sheet1.write(record_idx + spot_idx, 3, spot_data[0][1].strftime('%d/%m/%Y %H:%M:%S'))
+            sheet1.write(record_idx + spot_idx, 4, str(duration))
+            # sheet1.write(record_idx + spot_idx, 5, spot_ID)
+            # sheet1.write(record_idx + spot_idx, 6, int((spot_data[1][0] + spot_data[1][1]) / 2))
             spot_idx += 1
         record_idx += spot_idx
 
